@@ -1,11 +1,11 @@
 import { TokenPayload } from '../common/types/user';
 import * as jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
-import { RoleEnum } from "../utils/enum";
+import { RoleEnum, RoleType } from '../common';
 
 
 // Middleware to protect routes and check roles
-const protectRoute = (roles: RoleEnum[] = [RoleEnum.USER]) => {
+const protectRoute = (roles: RoleType[] = [RoleEnum[2]]) => {
   return (req: Request, res: Response, next: NextFunction) => {
     const authHeader = req.headers.authorization;
 

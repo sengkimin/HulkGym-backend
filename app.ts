@@ -1,25 +1,34 @@
 
 import express from 'express';
 const app = express();
-import routes from './src/routes/api';
 import auth from "./src/routes/auth"
 import { AppDataSource } from './src/config/data-source';
 import { DataSource } from 'typeorm';
 import swaggerJsDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import swaggerOptions from './swagger';
+import telegramBotRouter from "./src/routes/telegram-bot"
+import cors from "cors";
+import bodyParser from'body-parser';
 
+var corsOptions = {
+  origin: "*",
+};
+
+app.use(cors(corsOptions))
 
 // Middleware setup
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })) // for form data
+app.use(bodyParser.json());
 
 // Swagger setup
 const swaggerSpec = swaggerJsDoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Routes setup
-app.use('/api', auth)
+app.use('/api/auth', auth)
+app.use('/api/telegram', telegramBotRouter)
 
 
 // Start server
