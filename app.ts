@@ -10,6 +10,7 @@ import swaggerOptions from './swagger';
 import telegramBotRouter from "./src/routes/telegram-bot"
 import cors from "cors";
 import bodyParser from'body-parser';
+import activity from './src/routes/activity'
 
 var corsOptions = {
   origin: "*",
@@ -26,9 +27,10 @@ app.use(bodyParser.json());
 const swaggerSpec = swaggerJsDoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-// Routes setup
+// Routes setuphttps://fboxmschac.sharedwithexpose.com
 app.use('/api/auth', auth)
 app.use('/api/telegram', telegramBotRouter)
+app.use('/api/activity', activity)
 
 
 // Start server

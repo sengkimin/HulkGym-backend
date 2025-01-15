@@ -8,6 +8,7 @@ import {
     OneToMany,
   } from "typeorm";
   import { RoleEnum } from "../common/types/enum";
+import { Activity } from "./activity.entity";
   
   @Entity({ name: "User_Info" })
   export class UserInfo {
@@ -34,5 +35,8 @@ import {
   
     @UpdateDateColumn()
     modifiedAt: Date;
+
+    @OneToMany(() => Activity, (activity) => activity.user)
+    activities: Activity[]; // One user can have many activities
   }
   

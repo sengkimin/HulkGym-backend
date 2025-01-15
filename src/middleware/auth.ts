@@ -8,16 +8,22 @@ import { RoleEnum, RoleType } from '../common';
 const protectRoute = (roles: RoleType[] = [RoleEnum[2]]) => {
   return (req: Request, res: Response, next: NextFunction) => {
     const authHeader = req.headers.authorization;
-
+    // const token = req.cookies.token;
+    
     // Check if Authorization header exists and starts with "Bearer"
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return res.status(401).json({
         message: "Access denied, no token provided or invalid format",
       });
     }
-
-    const token = authHeader.split(" ")[1]; // Extract the token after "Bearer"
-
+    const token = authHeader.split(" ")[1];
+    if (!token ) {
+      console.log("error: ", "Access denied, no token provided or invalid format")
+      return res.status(401).json({
+        message: "Access denied, no token provided or invalid format",
+      });
+    }""
+    
     try {
       // Verify token
       const decoded = jwt.verify(token, process.env.JWT_SECRET || "") as TokenPayload;

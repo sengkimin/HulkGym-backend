@@ -27,8 +27,7 @@ export const telegramController = async (req: Request, res: Response) => {
 export const checkTelegramData = async (req: Request, res: Response) => {
   const userRepo = AppDataSource.getRepository(UserInfo);
   const { initData, userInfo } = req.body;
-  console.log("------ 1 ", decodeURIComponent(initData))
-  console.log("------ 2 ", userInfo)
+  console.log("------ 1 ", userInfo)
   const { TELEGRAM_TOKEN } = process.env
 
   const firstName = userInfo?.first_name || ""
@@ -47,6 +46,7 @@ export const checkTelegramData = async (req: Request, res: Response) => {
       const validUser = await userRepo.findOne({ where: { userEmail: userId} });
       if (validUser) {
         const token = generateToken({ id: validUser.id, role: validUser.role as RoleType });
+        console.log("Token1: ", token)
         return res.status(200).json({ message: "User authenticated.", token });
       }
 
@@ -59,7 +59,9 @@ export const checkTelegramData = async (req: Request, res: Response) => {
       await userRepo.save(user);
 
       const token = generateToken({ id: user.id, role: RoleEnum[2] });
-      return res.status(200).json({ message: "User created successfully", token });
+      console.log("Token2: ", token)
+
+      return res.status(200).json({ message: "User created successfully", token});
     } else {
       console.log("Invalid data")
       return res.status(400).json({ success: false, message: 'Invalid data' });
