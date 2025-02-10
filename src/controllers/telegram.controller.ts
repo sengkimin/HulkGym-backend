@@ -7,23 +7,6 @@ import { AppDataSource } from "../config";
 import { encryptPassword, generateToken } from "../utils/encrypt";
 
 
-export const telegramController = async (req: Request, res: Response) => {
-  const { body } = req;
-  console.log("---------- Post succsess!", req.body)
-  try {
-    if (body) {
-      const messageObj = body.message;
-      await handleMessage(messageObj);
-    }
-
-  } catch (error) {
-    console.error(error);
-  }
-
-  res.send()
-};
-
-
 export const checkTelegramData = async (req: Request, res: Response) => {
   const userRepo = AppDataSource.getRepository(UserInfo);
   const { initData, userInfo } = req.body;

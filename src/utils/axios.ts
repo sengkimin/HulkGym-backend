@@ -16,15 +16,5 @@ export const getAxiosInstance = () => {
                 params
             })
         },
-        // post(method: string, data) {
-        //     console.log("--- Post", data)
-
-        //     return axios({
-        //         method: "post",
-        //         baseURL: BASE_URL,
-        //         url:`/${method}`,
-        //         data
-        //     })
-        // }
     }
 }

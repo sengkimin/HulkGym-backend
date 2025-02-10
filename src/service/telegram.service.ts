@@ -1,5 +1,3 @@
-import { getAxiosInstance }  from "../utils/axios"
-
 interface MessageObj {
     chat: {
         id: number
@@ -7,12 +5,6 @@ interface MessageObj {
     text?: string
 }
 
-export function sendMessage(messageObj: MessageObj, messageText: string) {
-    return getAxiosInstance().get("SendMessage", {
-        chat_id: messageObj.chat.id,
-        text: messageText
-    })
-}
  
 export function handleMessage(messageObj: MessageObj) {
     const messageText = messageObj.text || ""
@@ -21,12 +13,10 @@ export function handleMessage(messageObj: MessageObj) {
         const command = messageText.substr(1)
         switch(command) {
             case "start":
-                return sendMessage(
-                    messageObj,
-                    "Hi, I'm a bot, I can help you to get started."
-                )
+                return "Hi, I'm a bot, I can help you to get started."
+
         }
     }else{
-        return sendMessage(messageObj, messageText)
+        return messageText
     }
 }
