@@ -4,6 +4,6 @@ import protectRoute from "../middleware/auth";
 
 const router = Router();
 
-router.get("/all", protectRoute(), getBranch);
+router.post("/create", protectRoute(), getBranch);
 
 export default router;

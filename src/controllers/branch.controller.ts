@@ -3,40 +3,65 @@ import { AppDataSource } from "../config";
 import { Branch } from "../entity/branch.entity";
 import { Company } from "../entity/company.entity";
 
+const branchRepository = AppDataSource.getRepository(Branch);
+const companyRepository = AppDataSource.getRepository(Company);
+
 export const getBranch = async (req: Request, res: Response) => {
-    const branchRepository = AppDataSource.getRepository(Branch);
-    const userId = req.user?.id ?? "";
-
     try {
-        const branches = await branchRepository.find({
-            // where: { company: { id: userId } },
-            relations: ["company"], 
-            select: { id: true, name: true, address: true },
-        });
-
-        return res.status(200).json({ message: "Success", branches });
+        const branch = await branchRepository.find({ relations: ["company"] });
+        return res.status(200).json({ message: "Success", branch });
     } catch (err) {
         return res.status(500).json({ success: false, message: "Internal server error!" });
     }
 };
+
+
 
 export const createBranch = async (req: Request, res: Response) => {
-    const branchRepository = AppDataSource.getRepository(Branch);
-    const companyRepository = AppDataSource.getRepository(Company);
-    const { name, address, company_id } = req.body;
-
     try {
-        const foundCompany = await companyRepository.findOne({ 
-                where: { id: Number(company_id) } });
-        if (!foundCompany) return res.status(404).json({ message: "Company not found" });
+        console.log("Received request:", req.body); // Log incoming request
 
-        const branch = branchRepository.create({ name, address, company_id , company: foundCompany });
-        await branchRepository.save(branch);
+        const branchRepository = AppDataSource.getRepository(Branch);
+        const companyRepository = AppDataSource.getRepository(Company);
+        const { name, address, company_id } = req.body;
 
-        return res.status(201).json({ message: "Branch created", branch });
+        console.log("Finding company with ID:", company_id);
+        const company = await companyRepository.findOne({ where: { id: company_id } });
+
+        if (!company) {
+            console.log("Company not found!");
+            return res.status(404).json({ message: "Company not found" });
+        }
+
+        console.log("Creating new branch...");
+        const branch = await branchRepository.save({ name, address, company });
+
+        console.log("Branch created successfully:", branch);
+        return res.status(201).json({ message: "Branch created successfully", branch });
+
+    } catch (err) {
+        console.error("Error creating branch:", err);
+        return res.status(500).json({ message: "Internal server error!" });
+    }
+};
+
+
+export const updateBranch = async (req: Request, res: Response) => {
+    const { id } = req.params;
+    try {
+        await branchRepository.update(id, req.body);
+        return res.status(200).json({ message: "Branch updated" });
     } catch (err) {
         return res.status(500).json({ success: false, message: "Internal server error!" });
     }
 };
 
-
+export const deleteBranch = async (req: Request, res: Response) => {
+    const { id } = req.params;
+    try {
+        await branchRepository.delete(id);
+        return res.status(200).json({ message: "Branch deleted" });
+    } catch (err) {
+        return res.status(500).json({ success: false, message: "Internal server error!" });
+    }
+};
