@@ -12,7 +12,7 @@ export class Branch {
   @Column({ type: 'varchar', length: 255 })
   address: string;
 
-  @ManyToOne(() => Company, (company) => company.branch, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Company, (company) => company.branch,)
   @JoinColumn({ name: 'company_id' })
   company: Company;
 

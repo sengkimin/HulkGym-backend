@@ -19,10 +19,10 @@ export class Company {
   phone_number: string;
 
   @Column({ type: 'time' })
-  open_time: string;
+  open_time: Date;
 
   @Column({ type: 'time' })
-  close_time: string;
+  close_time: Date;
 
   @CreateDateColumn()
   createdAt: Date;
