@@ -1,9 +1,10 @@
 # Hulk Gym Back-End API
 
+Resource: https://github.com/yagop/node-telegram-bot-api/blob/master/doc/api.md
+
 ### Prerequisite
 
 - Create a Telegram Bot [Color + HulkGym] using BotFather (you will get telegram url to your bot & token)
--
 
 ### Create `.env.dev`
 
