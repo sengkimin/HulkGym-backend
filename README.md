@@ -1,3 +1,10 @@
+# Hulk Gym Back-End API
+
+### Prerequisite
+
+- Create a Telegram Bot [Color + HulkGym] using BotFather (you will get telegram url to your bot & token)
+-
+
 ### Create `.env.dev`
 
 ```bash
@@ -37,10 +44,47 @@ services:
       - .:/usr/src/app
       - /usr/src/app/node_modules
 
+  database:
+    image: postgres:14-alpine
+    restart: always
+    ports:
+      - "5439:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    environment:
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_DATABASE}
+
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    ports:
+      - "5051:80"
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD}
+    depends_on:
+      - database
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+
+volumes:
+  postgres-data:
+  pgadmin-data:
+
 ```
 
 ### Run docker compose services
 
 ```bash
 docker compose --env-file .env.dev -f compose.dev.yml up -d --build
+
+?
+
+?
+
+npm run migration:generate
+npm run migration:run
 ```
