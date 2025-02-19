@@ -23,18 +23,18 @@
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "crypto-js": "^4.2.0",
-    "dotenv": "^16.4.5",
-    "express": "^4.19.2",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
     "express-zod-api": "^20.14.3",
     "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.11.1",
     "node-telegram-bot-api": "^0.66.0",
-    "pg": "^8.13.1",
+    "pg": "^8.13.3",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
     "ts-node": "^10.9.2",
     "typeorm": "^0.3.20",
-    "zod": "^3.23.8",
+    "zod": "^3.24.2",
     "zod-to-openapi": "^0.2.1"
   },
   "devDependencies": {
@@ -50,5 +50,5 @@
     "typescript": "^5.5.4"
   },
   "keywords": [],
-  "description": ""
+  "description": "Resource: https://github.com/yagop/node-telegram-bot-api/blob/master/doc/api.md"
 }
