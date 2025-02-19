@@ -11,9 +11,10 @@ import swaggerOptions from "./swagger";
 import cors from "cors";
 import bodyParser from "body-parser";
 import activity from "./src/routes/activity";
+import promotion from "./src/routes/promotion";
 
-import company from "./src/routes/company"
 
+import company from "./src/routes/compan
 import telegramBot from "node-telegram-bot-api";
 import { handleMessage } from "./src/service/telegram.service";
 import axios from "axios";
@@ -24,6 +25,7 @@ import   branch  from "./src/routes/branch";
 
 
 dotenv.config();
+
 
 // replace the value below with the Telegram token you receive from @BotFather
 
@@ -56,6 +58,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 // Routes setuphttps://fboxmschac.sharedwithexpose.com
 app.use("/api/auth", auth);
 app.use("/api/activity", activity);
+app.use("/api/promotion", promotion);
 
 app.use("/api/branch",branch)
 
