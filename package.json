@@ -26,7 +26,7 @@
     "express": "^4.19.2",
     "express-zod-api": "^20.14.3",
     "jsonwebtoken": "^9.0.2",
-    "mysql2": "^3.11.1",
+    "mysql2": "^3.12.0",
     "node-telegram-bot-api": "^0.66.0",
     "pg": "^8.13.1",
     "swagger-jsdoc": "^6.2.8",
