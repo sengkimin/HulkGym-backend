@@ -18,7 +18,7 @@ import company from "./src/routes/company"
 import workoutPlan from "./src/routes/workoutPlan"
 
 
-import company from "./src/routes/compan
+import contact from "./src/routes/contact"
 import telegramBot from "node-telegram-bot-api";
 import { handleMessage } from "./src/service/telegram.service";
 import axios from "axios";
