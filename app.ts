@@ -11,17 +11,27 @@ import swaggerOptions from "./swagger";
 import cors from "cors";
 import bodyParser from "body-parser";
 import activity from "./src/routes/activity";
+import promotion from "./src/routes/promotion";
+
 
 import company from "./src/routes/company"
 import workoutPlan from "./src/routes/workoutPlan"
 
+
+import company from "./src/routes/compan
 import telegramBot from "node-telegram-bot-api";
 import { handleMessage } from "./src/service/telegram.service";
 import axios from "axios";
 
-// replace the value below with the Telegram token you receive from @BotFather
+
+const token = process.env.TELEGRAM_TOKEN;
+if (!token) {
+  throw new Error("Telegram Bot Token not provided!");
+}
+
 const token = process.env.TELEGRAM_TOKEN || '7420058740:AAGc3btKgNkFzDwVZ7-OlMtTl3fm5YERjGc';
 console.log(process.env.TELEGRAM_TOKEN);
+
 
 
 var corsOptions = {
@@ -31,6 +41,7 @@ var corsOptions = {
 app.use(cors(corsOptions));
 
 // Middleware setup
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // for form data
 app.use(bodyParser.json());
@@ -42,8 +53,16 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 // Routes setuphttps://fboxmschac.sharedwithexpose.com
 app.use("/api/auth", auth);
 app.use("/api/activity", activity);
+
+app.use("/api/contact", contact);
+
+app.use("/api/promotion", promotion);
+
+app.use("/api/branch",branch)
+
 app.use("/api/company", company);
 app.use("/api/workoutPlan", workoutPlan);
+
 
 // Create a bot that uses 'polling' to fetch new updates
 const bot = new telegramBot(token, { polling: true });
