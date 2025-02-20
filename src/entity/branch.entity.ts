@@ -1,34 +1,24 @@
-import {
-    Entity,
-    PrimaryGeneratedColumn,
-    Column,
-    ManyToOne,
-    JoinColumn,
-    CreateDateColumn,
-    UpdateDateColumn,
-} from 'typeorm';
-// import { Company } from './company.entity'; // ✅ Ensure this import exists
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn, JoinColumn } from "typeorm";
+import { Company } from "./company.entity";
 
 @Entity('branch')
 export class Branch {
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-    // @ManyToOne(() => Company, (company) => company.branch, { onDelete: 'CASCADE' })
-    // @JoinColumn({ name: 'company_id' })
-    // company: Company;
-    @Column({ type: 'varchar', length: 255 })
-    company_id: string;
+  @Column({ type: 'varchar', length: 255 })
+  name: string;
 
-    @Column({ type: 'varchar', length: 255 })
-    name: string;
+  @Column({ type: 'varchar', length: 255 })
+  address: string;
 
-    @Column({ type: 'varchar', length: 255 })
-    address: string;
+  @ManyToOne(() => Company, (company) => company.branch,)
+  @JoinColumn({ name: 'company_id' })
+  company: Company;
 
-    @CreateDateColumn()
-    createdAt: Date;
+  @CreateDateColumn()
+  createdAt: Date;
 
-    @UpdateDateColumn()
-    updatedAt: Date;
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

@@ -23,14 +23,23 @@ import telegramBot from "node-telegram-bot-api";
 import { handleMessage } from "./src/service/telegram.service";
 import axios from "axios";
 
+// import * as dotenv from "dotenv";
+import TelegramBot from "node-telegram-bot-api";
+import   branch  from "./src/routes/branch";
+
+
+
+// dotenv.config();
+
+// replace the value below with the Telegram token you receive from @BotFather
+
+
 
 const token = process.env.TELEGRAM_TOKEN;
 if (!token) {
   throw new Error("Telegram Bot Token not provided!");
 }
 
-const token = process.env.TELEGRAM_TOKEN || '7420058740:AAGc3btKgNkFzDwVZ7-OlMtTl3fm5YERjGc';
-console.log(process.env.TELEGRAM_TOKEN);
 
 
 
