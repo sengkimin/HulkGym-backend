@@ -5,7 +5,6 @@ import { Branch } from "./branch.entity";
 export class Company {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-
   @Column({ type: 'varchar', length: 255 })
   company_name: string;
 
@@ -29,7 +28,6 @@ export class Company {
 
   @UpdateDateColumn()
   updatedAt: Date;
-
   @OneToMany(() => Branch, (branch) => branch.company, { cascade: true })
   branch: Branch[];
 }
