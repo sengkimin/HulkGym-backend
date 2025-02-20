@@ -3,29 +3,29 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateCol
 @Entity('company')
 export class Company {
   @PrimaryGeneratedColumn('uuid')
-  id: string; // UUID as a primary key
+  id: string;
   @Column({ type: 'varchar', length: 255})
   company_name: string;
 
   @Column({ type: 'varchar', length: 255 })
-  address: string; // Activity title
+  address: string;
 
   @Column({ type: 'varchar', length: 255 })
-  email: string; // Activity icon (emoji or text)
+  email: string;
 
   @Column({ type: 'varchar', length: 255 })
-  phone_number: number; // Number of sets
+  phone_number: number;
 
   @Column({ type: 'varchar', length: 255 })
-  open_time: Date; // Number of reps per set
+  open_time: Date;
 
   @Column({ type: 'varchar', length: 255 })
-  close_time: Date; // Current set (default: 1)
+  close_time: Date;
 
   @CreateDateColumn()
-  createAt: Date; // Timestamp of creation
+  createAt: Date;
 
   @UpdateDateColumn()
-  updateAt: Date; // Timestamp of last update
+  updateAt: Date;
 
 }

@@ -1,11 +1,10 @@
-// src/controllers/companyController.ts
+
 import { Request, Response } from 'express';
 import { AppDataSource } from '../config';
 import { Company } from '../entity/company.entity';
 
 const companyRepository = AppDataSource.getRepository(Company);
 
-// Helper function to get error message
 const getErrorMessage = (error: unknown): string => {
   if (error instanceof Error) {
     return error.message;
@@ -23,7 +22,6 @@ export const createCompany = async (req: Request, res: Response) => {
   }
 };
 
-// Get all companies
 export const getAllCompanies = async (_req: Request, res: Response) => {
   try {
     const companies = await companyRepository.find();
@@ -33,7 +31,6 @@ export const getAllCompanies = async (_req: Request, res: Response) => {
   }
 };
 
-// Get a company by ID
 export const getCompanyById = async (req: Request, res: Response) => {
   try {
     const company = await companyRepository.findOneBy({ id: req.params.id });
@@ -60,15 +57,17 @@ export const updateCompany = async (req: Request, res: Response) => {
   }
 };
 
-// Delete a company
 export const deleteCompany = async (req: Request, res: Response) => {
   try {
     const result = await companyRepository.delete(req.params.id);
+    
     if (result.affected === 0) {
       return res.status(404).json({ message: 'Company not found' });
     }
-    res.status(204).send();
+
+    return res.status(200).json({ message: 'Company deleted successfully' });
   } catch (error) {
-    res.status(500).json({ error: getErrorMessage(error) });
+    return res.status(500).json({ error: getErrorMessage(error) });
   }
 };
+
