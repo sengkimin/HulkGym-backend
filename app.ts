@@ -14,6 +14,10 @@ import activity from "./src/routes/activity";
 import promotion from "./src/routes/promotion";
 
 
+import company from "./src/routes/company"
+import workoutPlan from "./src/routes/workoutPlan"
+
+
 import company from "./src/routes/compan
 import telegramBot from "node-telegram-bot-api";
 import { handleMessage } from "./src/service/telegram.service";
@@ -57,6 +61,7 @@ app.use("/api/promotion", promotion);
 app.use("/api/branch",branch)
 
 app.use("/api/company", company);
+app.use("/api/workoutPlan", workoutPlan);
 
 
 // Create a bot that uses 'polling' to fetch new updates
