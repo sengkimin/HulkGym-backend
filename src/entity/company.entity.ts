@@ -1,31 +1,33 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany, JoinColumn} from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from "typeorm";
+import { Branch } from "./branch.entity";
 
 @Entity('company')
 export class Company {
   @PrimaryGeneratedColumn('uuid')
-  id: string; // UUID as a primary key
-  @Column({ type: 'varchar', length: 255})
+  id: string;
+  @Column({ type: 'varchar', length: 255 })
   company_name: string;
 
   @Column({ type: 'varchar', length: 255 })
-  address: string; // Activity title
+  address: string;
 
   @Column({ type: 'varchar', length: 255 })
-  email: string; // Activity icon (emoji or text)
+  email: string;
 
-  @Column({ type: 'varchar', length: 255 })
-  phone_number: number; // Number of sets
+  @Column({ type: 'varchar', length: 20 })
+  phone_number: string;
 
-  @Column({ type: 'varchar', length: 255 })
-  open_time: Date; // Number of reps per set
+  @Column({ type: 'time' })
+  open_time: Date;
 
-  @Column({ type: 'varchar', length: 255 })
-  close_time: Date; // Current set (default: 1)
+  @Column({ type: 'time' })
+  close_time: Date;
 
   @CreateDateColumn()
-  createAt: Date; // Timestamp of creation
+  createdAt: Date;
 
   @UpdateDateColumn()
-  updateAt: Date; // Timestamp of last update
-
+  updatedAt: Date;
+  @OneToMany(() => Branch, (branch) => branch.company, { cascade: true })
+  branch: Branch[];
 }
