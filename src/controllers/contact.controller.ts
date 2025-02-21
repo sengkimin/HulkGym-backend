@@ -6,10 +6,10 @@ import { Branch } from "../entity/branch.entity";
 export const createContact = async (req: Request, res: Response) => {
   const contactRepository = AppDataSource.getRepository(Contact);
   const branchRepository = AppDataSource.getRepository(Branch);
-  const { phone_number, email } = req.body;
+  const { phone_number} = req.body;
   const branchID = req.params?.id;
 
-  if (!phone_number || !email) {
+  if (!phone_number ) {
     return res
       .status(400)
       .json({ success: false, message: "Missing required fields" });
@@ -30,16 +30,20 @@ export const createContact = async (req: Request, res: Response) => {
     const contact = new Contact();
     contact.branch = branchId;
     contact.phone_number = phone_number;
-    contact.email = email;
+   
     await contactRepository.save(contact);
 
-    return res
-      .status(201)
-      .json({
-        success: true,
-        message: "Contact created successfully",
-        contact,
-      });
+    return res.status(201).json({
+      success: true,
+      message: "Contact created successfully",
+      contact: {
+        id: contact.id,
+        phone_number: contact.phone_number,
+        branch_id: contact.branch.id,
+        created_at: contact.created_at,
+        updated_at: contact.updated_at,
+      },
+    });
   } catch (err) {
     console.error("Error creating contact:", err);
     return res
@@ -57,9 +61,14 @@ export const getContact = async (req: Request, res: Response) => {
     });
 
     console.log(contacts);
-    return res.status(200).json({ message: "Success", contacts });
+
+    return res.status(200).json({
+      success: true,
+      message: "Success",
+      contacts,
+    });
   } catch (err) {
-    console.log(err);
+    console.error("Error fetching contacts:", err);
     return res
       .status(500)
       .json({ success: false, message: "Internal server error!" });
@@ -71,7 +80,11 @@ export const getContactById = async (req: Request, res: Response) => {
   const branchID = req.params?.id;
 
   try {
-    const contact = await contactRepository.findOneBy({ id: branchID });
+    const contact = await contactRepository.findOne({
+      where: { id: branchID }, 
+      relations: ["branch"], 
+    });
+    
 
     if (!contact) {
       return res
@@ -86,7 +99,8 @@ export const getContactById = async (req: Request, res: Response) => {
       .status(500)
       .json({ success: false, message: "Internal server error!" });
   }
-};
+}; 
+
 
 export const updateById = async (req: Request, res: Response) => {
   const contactRepository = AppDataSource.getRepository(Contact);
@@ -94,14 +108,16 @@ export const updateById = async (req: Request, res: Response) => {
   const branchID = req.params?.id;
 
   try {
-    const contact = await contactRepository.findOneBy({ id: branchID });
+    const contact = await contactRepository.findOne({
+      where: { id: branchID }, 
+      relations: ["branch"], 
+    });
     if (!contact) {
       return res
         .status(404)
         .json({ success: false, message: "Contact not found" });
     }
     contact.phone_number = phone_number;
-    contact.email = email;
     await contactRepository.save(contact);
 
     return res.status(200).json({ success: true, message: "Success", contact });

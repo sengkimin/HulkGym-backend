@@ -22,10 +22,7 @@ export class Contact {
 
     @Column({ type: 'varchar', length: 30 })
     phone_number: string; 
-  
-    @Column({ type: 'varchar', length: 30 })
-    email: string; 
-  
+      
     @CreateDateColumn()
     created_at: Date; 
   
