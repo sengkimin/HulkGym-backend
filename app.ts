@@ -25,6 +25,7 @@ import axios from "axios";
 // import * as dotenv from "dotenv";
 import TelegramBot from "node-telegram-bot-api";
 import branch from "./src/routes/branch";
+import {News} from "./src/entity/news.entity"
 
 // dotenv.config();
 
@@ -74,6 +75,7 @@ const commands = [
   { command: "/help", description: "Get help and usage instructions" },
   { command: "/contact", description: "Get contact information" },
   { command: "/promotion", description: "See current promotions" },
+  { command: "/news", description: "New news " },
   { command: "/feedback", description: "Submit feedback" },
   { command: "/image", description: "Send an image" },
   { command: "/text", description: "Send a text message" },
@@ -117,12 +119,27 @@ bot.onText(/\/promotion/, (msg) => {
   );
 });
 
-bot.onText(/\/feedback/, (msg) => {
-  bot.sendMessage(
-    msg.chat.id,
-    "Please send your feedback here, and we will review it."
-  );
+bot.onText(/\/news/, async (msg) => {
+  const chatId = msg.chat.id;
+  try {
+    const newsRepository = AppDataSource.getRepository(News);
+    const newsList = await newsRepository.find({ take: 10 });
+
+    if (newsList.length > 0) {
+      let message = "Here are the latest news updates:\n\n";
+      newsList.forEach((newsItem, index) => {
+        message += `${index + 1}. ${newsItem.title}\n`;
+      });
+      bot.sendMessage(chatId, message);
+    } else {
+      bot.sendMessage(chatId, "No news available at the moment.");
+    }
+  } catch (error) {
+    console.error("Error fetching news:", error);
+    bot.sendMessage(chatId, "An error occurred while fetching news.");
+  }
 });
+
 
 // Handle /image command
 bot.onText(/\/image/, (msg) => {
