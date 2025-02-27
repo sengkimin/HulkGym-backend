@@ -7,7 +7,7 @@ export const getAllNews = async (req: Request, res: Response) => {
   try {
     const newsRepository = AppDataSource.getRepository(News);
     const newsList = await newsRepository.find({
-      select: ["id", "title", "description", "location", "start_date", "end_date"],
+      select: ["id", "title", "description", "location", "start_date", "end_date", "image"],
     });
 
     return res.status(200).json({ message: "Success", news: newsList });
@@ -25,7 +25,7 @@ export const getNewsById = async (req: Request, res: Response) => {
   try {
     const news = await newsRepository.findOne({
       where: { id },
-      select: ["id", "title", "description", "location", "start_date", "end_date"]
+      select: ["id", "title", "description", "location", "start_date", "end_date", "image"]
     });
 
     if (!news) {
@@ -42,14 +42,15 @@ export const getNewsById = async (req: Request, res: Response) => {
 export const createNews = async (req: Request, res: Response) => {
   try {
     const newsRepository = AppDataSource.getRepository(News);
-    const { title, description, location, start_date, end_date } = req.body;
+    const { title, description, location, start_date, end_date, image } = req.body;
 
     const newNews = newsRepository.create({
       title,
       description,
       location,
       start_date,
-      end_date
+      end_date,
+      image
     });
 
     await newsRepository.save(newNews);
@@ -64,7 +65,7 @@ export const createNews = async (req: Request, res: Response) => {
 export const updateNews = async (req: Request, res: Response) => {
   const newsRepository = AppDataSource.getRepository(News);
   const { id } = req.params;
-  const { title, description, location, start_date, end_date } = req.body;
+  const { title, description, location, start_date, end_date, image } = req.body;
 
   try {
     const news = await newsRepository.findOne({ where: { id } });
@@ -78,6 +79,7 @@ export const updateNews = async (req: Request, res: Response) => {
     news.location = location || news.location;
     news.start_date = start_date || news.start_date;
     news.end_date = end_date || news.end_date;
+    news.image = image || news.image;
 
     await newsRepository.save(news);
     return res.status(200).json({ message: "News updated successfully!", news });

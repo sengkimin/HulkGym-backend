@@ -27,6 +27,9 @@ import TelegramBot from "node-telegram-bot-api";
 import branch from "./src/routes/branch";
 import membershipPlan  from "./src/routes/membershipPlan";
 
+import {News} from "./src/entity/news.entity"
+
+
 // dotenv.config();
 
 // replace the value below with the Telegram token you receive from @BotFather
@@ -76,6 +79,7 @@ const commands = [
   { command: "/help", description: "Get help and usage instructions" },
   { command: "/contact", description: "Get contact information" },
   { command: "/promotion", description: "See current promotions" },
+  { command: "/news", description: "See cuurent news and announcement " },
   { command: "/feedback", description: "Submit feedback" },
   { command: "/image", description: "Send an image" },
   { command: "/text", description: "Send a text message" },
@@ -119,12 +123,34 @@ bot.onText(/\/promotion/, (msg) => {
   );
 });
 
-bot.onText(/\/feedback/, (msg) => {
-  bot.sendMessage(
-    msg.chat.id,
-    "Please send your feedback here, and we will review it."
-  );
+bot.onText(/\/news/, async (msg) => {
+  const chatId = msg.chat.id;
+  try {
+    const newsRepository = AppDataSource.getRepository(News);
+    const newsList = await newsRepository.find({ take: 5 });
+
+    if (newsList.length > 0) {
+      for (const newsItem of newsList) {
+        const caption = `*${newsItem.title}*\n\n📅 *Date:* ${newsItem.end_date}\n📍 *Location:* ${newsItem.location}\n📝 *Description:* ${newsItem.description}`;
+        
+        if (newsItem.image) {
+          await bot.sendPhoto(chatId, newsItem.image, {
+            caption: caption,
+            parse_mode: "Markdown"
+          });
+        } else {
+          await bot.sendMessage(chatId, caption, { parse_mode: "Markdown" });
+        }
+      }
+    } else {
+      bot.sendMessage(chatId, "No news available at the moment.");
+    }
+  } catch (error) {
+    console.error("Error fetching news:", error);
+    bot.sendMessage(chatId, "An error occurred while fetching news.");
+  }
 });
+
 
 // Handle /image command
 bot.onText(/\/image/, (msg) => {
