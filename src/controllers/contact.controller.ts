@@ -104,7 +104,7 @@ export const getContactById = async (req: Request, res: Response) => {
 
 export const updateById = async (req: Request, res: Response) => {
   const contactRepository = AppDataSource.getRepository(Contact);
-  const { phone_number, email } = req.body;
+  const { phone_number} = req.body;
   const branchID = req.params?.id;
 
   try {
