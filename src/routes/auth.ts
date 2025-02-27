@@ -4,7 +4,7 @@ import { checkTelegramData } from "../controllers/telegram.controller";
 
 const router = Router();
 
-router.post("/register", register);
+router.post("/regjhgfdsister", register);
 router.post("/login", login);
 router.post("/validate", checkTelegramData);
 

@@ -25,6 +25,7 @@ import axios from "axios";
 // import * as dotenv from "dotenv";
 import TelegramBot from "node-telegram-bot-api";
 import branch from "./src/routes/branch";
+import membershipPlan  from "./src/routes/membershipPlan";
 
 // dotenv.config();
 
@@ -56,6 +57,7 @@ app.use("/api/auth", auth);
 app.use("/api/activity", activity);
 
 app.use("/api/contact", contact);
+app.use("/api/membershipPlan", membershipPlan);
 
 app.use("/api/promotion", promotion);
 app.use("/api/news", news);

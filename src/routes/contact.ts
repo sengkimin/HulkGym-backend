@@ -9,6 +9,4 @@ router.get("/:id", getContactById);
 router.put("/:id", updateById);
 router.delete("/:id", deleteById);
 
-
-
 export default router;
