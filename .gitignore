@@ -5,4 +5,7 @@ build/
 tmp/
 temp/
 .env.dev/
-.docker-compose.yml/
+docker-compose.yml/
+.env/
+compose.dev.yml/
+
