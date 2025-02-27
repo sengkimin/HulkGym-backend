@@ -75,7 +75,7 @@ const commands = [
   { command: "/help", description: "Get help and usage instructions" },
   { command: "/contact", description: "Get contact information" },
   { command: "/promotion", description: "See current promotions" },
-  { command: "/news", description: "New news " },
+  { command: "/news", description: "See cuurent news and announcement " },
   { command: "/feedback", description: "Submit feedback" },
   { command: "/image", description: "Send an image" },
   { command: "/text", description: "Send a text message" },
@@ -123,14 +123,21 @@ bot.onText(/\/news/, async (msg) => {
   const chatId = msg.chat.id;
   try {
     const newsRepository = AppDataSource.getRepository(News);
-    const newsList = await newsRepository.find({ take: 10 });
+    const newsList = await newsRepository.find({ take: 5 });
 
     if (newsList.length > 0) {
-      let message = "Here are the latest news updates:\n\n";
-      newsList.forEach((newsItem, index) => {
-        message += `${index + 1}. ${newsItem.title}\n`;
-      });
-      bot.sendMessage(chatId, message);
+      for (const newsItem of newsList) {
+        const caption = `*${newsItem.title}*\n\n📅 *Date:* ${newsItem.end_date}\n📍 *Location:* ${newsItem.location}\n📝 *Description:* ${newsItem.description}`;
+        
+        if (newsItem.image) {
+          await bot.sendPhoto(chatId, newsItem.image, {
+            caption: caption,
+            parse_mode: "Markdown"
+          });
+        } else {
+          await bot.sendMessage(chatId, caption, { parse_mode: "Markdown" });
+        }
+      }
     } else {
       bot.sendMessage(chatId, "No news available at the moment.");
     }
