@@ -22,7 +22,7 @@ export const createBranch = async (req: Request, res: Response) => {
     try {
         console.log("Received request:", req.body); 
         
-        const { name, address, company_id } = req.body;
+        const { name, address, company_id , image } = req.body;
         const companyRepository = AppDataSource.getRepository(Company);
         const company = await companyRepository.findOne({ where: { id: company_id } });
 
@@ -31,7 +31,7 @@ export const createBranch = async (req: Request, res: Response) => {
         }
         console.log("Creating new branch...");
         const branchRepository = AppDataSource.getRepository(Branch);
-        const branch = branchRepository.create({ name, address, company });
+        const branch = branchRepository.create({ name, address, company , image});
         await branchRepository.save(branch);
 
         console.log("Branch created successfully:", branch);

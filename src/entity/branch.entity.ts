@@ -24,6 +24,9 @@ export class Branch {
   @UpdateDateColumn()
   updatedAt: Date;
 
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  image: string;
+
   @OneToMany(() => Contact, (contact) => contact.branch)
   contacts: Contact[]; 
 }

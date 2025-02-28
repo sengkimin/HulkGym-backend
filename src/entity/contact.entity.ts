@@ -11,6 +11,7 @@ import {
 // import { Company } from './company.entity'; 
 import { Branch } from './branch.entity'; 
 
+
 @Entity('contact')
 export class Contact {
     @PrimaryGeneratedColumn('uuid')
