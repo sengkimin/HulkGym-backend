@@ -30,11 +30,6 @@ import { Promotion } from "./src/entity/promotion.entity";
 
 
 
-
-// dotenv.config();
-
-// replace the value below with the Telegram token you receive from @BotFather
-
 const token = process.env.TELEGRAM_TOKEN;
 if (!token) {
   throw new Error("Telegram Bot Token not provided!");
@@ -45,9 +40,6 @@ var corsOptions = {
 };
 
 app.use(cors(corsOptions));
-
-// Middleware setup
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // for form data
 app.use(bodyParser.json());
@@ -77,7 +69,6 @@ const bot = new telegramBot(token, { polling: true });
 // Define the command list
 const commands = [
   { command: "/start", description: "Start the bot and get command list" },
-
   { command: "/promotions", description: "Check out the latest deals & discounts" },
   { command: "/freecoupons", description: "Grab limited-time free coupons" },
   { command: "/pricing", description: "View membership and service pricing" },
@@ -88,6 +79,9 @@ const commands = [
   { command: "/joinus", description: "Become a member and start your journey" },
   { command: "/mymembership", description: "View your membership details" },
   { command: "/subscribe", description: "Stay updated with notifications" },
+
+];
+
   { command: "/callback-gury", description: "Stay updated with notifications" },
 
 ];
@@ -97,7 +91,7 @@ bot.setMyCommands(commands)
   .then(() => console.log("Commands set successfully"))
   .catch((err) => console.error("Error setting commands:", err));
 
-// Command Handlers
+
 bot.onText(/\/start/, (msg) => {
   const chatId = msg.chat.id;
   const welcomeMessage = `
@@ -106,6 +100,7 @@ bot.onText(/\/start/, (msg) => {
 Stay fit, stay updated, and enjoy exclusive perks! Here’s what you can do:  
 
 📌 *Commands:*  
+
 
 ✅ /promotions – Check out the latest deals & discounts!  
 
@@ -132,6 +127,7 @@ Stay fit, stay updated, and enjoy exclusive perks! Here’s what you can do:
 
   bot.sendMessage(chatId, welcomeMessage, { parse_mode: "Markdown" });
 });
+
 
 bot.onText(/\/promotion/, async (msg) => {
   const chatId = msg.chat.id;
