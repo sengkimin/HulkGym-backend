@@ -29,3 +29,4 @@ export class News {
   @UpdateDateColumn()
   updated_at: Date;
 }
+
