@@ -72,32 +72,56 @@ const bot = new telegramBot(token, { polling: true });
 // Define the command list
 const commands = [
   { command: "/start", description: "Start the bot and get command list" },
-  { command: "/help", description: "Get help and usage instructions" },
-  { command: "/contact", description: "Get contact information" },
-  { command: "/promotion", description: "See current promotions" },
-  { command: "/news", description: "See cuurent news and announcement " },
-  { command: "/feedback", description: "Submit feedback" },
-  { command: "/image", description: "Send an image" },
-  { command: "/text", description: "Send a text message" },
-  { command: "/link", description: "Send a link" },
-  { command: "/list", description: "Send a list" },
-  { command: "/table", description: "Send a table" },
-  { command: "/options", description: "Send options" },
+  { command: "/promotions", description: "Check out the latest deals & discounts" },
+  { command: "/freecoupons", description: "Grab limited-time free coupons" },
+  { command: "/pricing", description: "View membership and service pricing" },
+  { command: "/news", description: "Get the latest updates and announcements" },
+  { command: "/workouts", description: "Explore workout plans & fitness tips" },
+  { command: "/survey", description: "Help us improve our services" },
+  { command: "/branches", description: "View all branches of Hulk Gym" },
+  { command: "/joinus", description: "Become a member and start your journey" },
+  { command: "/mymembership", description: "View your membership details" },
+  { command: "/subscribe", description: "Stay updated with notifications" },
+
 ];
 
-// Set bot commands in Telegram
-bot
-  .setMyCommands(commands)
-  .then(() => console.log("Commands set successfully"));
+bot.setMyCommands(commands)
+  .then(() => console.log("Commands set successfully"))
+  .catch((err) => console.error("Error setting commands:", err));
 
-// Handle /start command
 bot.onText(/\/start/, (msg) => {
   const chatId = msg.chat.id;
-  let response = "Welcome! Here are the available commands:\n\n";
-  commands.forEach((cmd) => {
-    response += `${cmd.command} - ${cmd.description}\n`;
-  });
-  bot.sendMessage(chatId, response);
+  const welcomeMessage = `
+💪 *Welcome to Hulk Gym Bot!*  
+
+Stay fit, stay updated, and enjoy exclusive perks! Here’s what you can do:  
+
+📌 *Commands:*  
+
+✅ /promotions – Check out the latest deals & discounts!  
+
+🎟 /freecoupons – Grab limited-time free coupons!  
+
+💰 /pricing – View membership and service pricing.  
+
+📰 /news – Get the latest updates and announcements.  
+
+🏋️ /workouts – Explore workout plans & fitness tips.  
+
+📋 /survey – Share your feedback & help us improve.  
+
+📋 /branches – View all branches of Hulk Gym.  
+
+🚀 /joinus – Become a member and start your journey!  
+
+❤️ /survey – Help us to improve our customer experience by giving a survey.  
+
+📜 /mymembership – View your membership details.  
+
+🔔 /subscribe – Stay updated with notifications.  
+  `;
+
+  bot.sendMessage(chatId, welcomeMessage, { parse_mode: "Markdown" });
 });
 
 // Handle other commands
