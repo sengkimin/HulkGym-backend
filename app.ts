@@ -21,10 +21,16 @@ import contact from "./src/routes/contact";
 import telegramBot from "node-telegram-bot-api";
 import { handleMessage } from "./src/service/telegram.service";
 import branch from "./src/routes/branch";
+import membershipPlan  from "./src/routes/membershipPlan";
+
 import {News} from "./src/entity/news.entity"
 import { Branch } from "./src/entity/branch.entity";
 import { WorkoutPlan } from "./src/entity/workoutPlan.entity";
 import { Promotion } from "./src/entity/promotion.entity";
+
+
+
+
 // dotenv.config();
 
 // replace the value below with the Telegram token you receive from @BotFather
@@ -55,6 +61,7 @@ app.use("/api/auth", auth);
 app.use("/api/activity", activity);
 
 app.use("/api/contact", contact);
+app.use("/api/membershipPlan", membershipPlan);
 
 app.use("/api/promotion", promotion);
 app.use("/api/news", news);
