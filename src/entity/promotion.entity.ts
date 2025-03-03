@@ -9,8 +9,8 @@ import {
 @Entity('promotion')
 export class Promotion {
   @PrimaryGeneratedColumn('uuid')
-  id: string; // ✅ FIXED: UUID should be a string
-
+  id: string; 
+  
   @Column({ type: 'varchar', length: 255 })
   title: string;
 
@@ -25,6 +25,9 @@ export class Promotion {
 
   @Column({ type: 'date' })
   end_date: Date;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  image: string;
 
   @CreateDateColumn()
   created_at: Date;

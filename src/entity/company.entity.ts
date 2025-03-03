@@ -1,10 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany, JoinColumn} from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from "typeorm";
+import { Branch } from "./branch.entity";
 
 @Entity('company')
 export class Company {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  @Column({ type: 'varchar', length: 255})
+  @Column({ type: 'varchar', length: 255 })
   company_name: string;
 
   @Column({ type: 'varchar', length: 255 })
@@ -13,19 +14,20 @@ export class Company {
   @Column({ type: 'varchar', length: 255 })
   email: string;
 
-  @Column({ type: 'varchar', length: 255 })
-  phone_number: number;
+  @Column({ type: 'varchar', length: 20 })
+  phone_number: string;
 
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ type: 'time' })
   open_time: Date;
 
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ type: 'time' })
   close_time: Date;
 
   @CreateDateColumn()
-  createAt: Date;
+  createdAt: Date;
 
   @UpdateDateColumn()
-  updateAt: Date;
-
+  updatedAt: Date;
+  @OneToMany(() => Branch, (branch) => branch.company, { cascade: true })
+  branch: Branch[];
 }

@@ -1,4 +1,4 @@
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 dotenv.config();
 import express from "express";
 const app = express();
@@ -12,7 +12,7 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import activity from "./src/routes/activity";
 import promotion from "./src/routes/promotion";
-
+import news from "./src/routes/news";
 
 import company from "./src/routes/company"
 import workoutPlan from "./src/routes/workoutPlan"
@@ -28,7 +28,14 @@ import contact from "./src/routes/contact"
 
 import telegramBot from "node-telegram-bot-api";
 import { handleMessage } from "./src/service/telegram.service";
-import axios from "axios";
+import branch from "./src/routes/branch";
+import membershipPlan  from "./src/routes/membershipPlan";
+
+import {News} from "./src/entity/news.entity"
+import { Branch } from "./src/entity/branch.entity";
+import { WorkoutPlan } from "./src/entity/workoutPlan.entity";
+import { Promotion } from "./src/entity/promotion.entity";
+
 
 
 // const token = process.env.TELEGRAM_TOKEN;
@@ -36,19 +43,11 @@ import axios from "axios";
 //   throw new Error("Telegram Bot Token not provided!");
 // }
 
-const token = process.env.TELEGRAM_TOKEN || '7420058740:AAGc3btKgNkFzDwVZ7-OlMtTl3fm5YERjGc';
-console.log(process.env.TELEGRAM_TOKEN);
-
-
-
 var corsOptions = {
   origin: "*",
 };
 
 app.use(cors(corsOptions));
-
-// Middleware setup
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // for form data
 app.use(bodyParser.json());
@@ -62,16 +61,17 @@ app.use("/api/auth", auth);
 app.use("/api/activity", activity);
 
 app.use("/api/contact", contact);
+app.use("/api/membershipPlan", membershipPlan);
 
 app.use("/api/promotion", promotion);
+app.use("/api/news", news);
 
-app.use("/api/branch",branch)
+app.use("/api/branch", branch);
 
 app.use("/api/company", company);
 app.use("/api/workoutPlan", workoutPlan);
 app.use("/api/typeOfWorkout", workouType);
 app.use("/api/workoutExercise", workoutExercise);
-
 
 // Create a bot that uses 'polling' to fetch new updates
 const bot = new telegramBot(token, { polling: true });
@@ -79,6 +79,7 @@ const bot = new telegramBot(token, { polling: true });
 // Define the command list
 const commands = [
   { command: "/start", description: "Start the bot and get command list" },
+  
   { command: "/help", description: "Get help and usage instructions" },
   { command: "/contact", description: "Get contact information" },
   { command: "/promotion", description: "See current promotions" },
@@ -90,89 +91,286 @@ const commands = [
   { command: "/table", description: "Send a table" },
   { command: "/options", description: "Send options" },
   { command: "/workoutplan", description: " Send workout plan"}
+
+  { command: "/promotions", description: "Check out the latest deals & discounts" },
+  { command: "/freecoupons", description: "Grab limited-time free coupons" },
+  { command: "/pricing", description: "View membership and service pricing" },
+  { command: "/news", description: "Get the latest updates and announcements" },
+  { command: "/workouts", description: "Explore workout plans & fitness tips" },
+  { command: "/survey", description: "Help us improve our services" },
+  { command: "/branches", description: "View all branches of Hulk Gym" },
+  { command: "/joinus", description: "Become a member and start your journey" },
+  { command: "/mymembership", description: "View your membership details" },
+  { command: "/subscribe", description: "Stay updated with notifications" },
+
 ];
 
-// Set bot commands in Telegram
-bot
-  .setMyCommands(commands)
-  .then(() => console.log("Commands set successfully"));
+  { command: "/callback-gury", description: "Stay updated with notifications" },
 
-// Handle /start command
+];
+
+// Set bot commands
+bot.setMyCommands(commands)
+  .then(() => console.log("Commands set successfully"))
+  .catch((err) => console.error("Error setting commands:", err));
+
+
 bot.onText(/\/start/, (msg) => {
   const chatId = msg.chat.id;
-  let response = "Welcome! Here are the available commands:\n\n";
-  commands.forEach((cmd) => {
-    response += `${cmd.command} - ${cmd.description}\n`;
-  });
-  bot.sendMessage(chatId, response);
-});
+  const welcomeMessage = `
+💪 *Welcome to Hulk Gym Bot!*  
 
-// Handle other commands
-bot.onText(/\/help/, (msg) => {
-  bot.sendMessage(
-    msg.chat.id,
-    "This bot allows you to access various features. Use /start to see available commands."
-  );
-});
+Stay fit, stay updated, and enjoy exclusive perks! Here’s what you can do:  
 
-bot.onText(/\/contact/, (msg) => {
-  bot.sendMessage(msg.chat.id, "You can contact us at support@example.com.");
-});
+📌 *Commands:*  
 
-bot.onText(/\/promotion/, (msg) => {
-  bot.sendMessage(
-    msg.chat.id,
-    "Check out our latest promotions at https://example.com/promotions"
-  );
-});
 
-bot.onText(/\/feedback/, (msg) => {
-  bot.sendMessage(
-    msg.chat.id,
-    "Please send your feedback here, and we will review it."
-  );
-});
+✅ /promotions – Check out the latest deals & discounts!  
 
-// Handle /image command
-bot.onText(/\/image/, (msg) => {
-  bot.sendPhoto(msg.chat.id, "https://picsum.photos/seed/picsum/200/300", {
-    caption: "Here is an image for you!",
-  });
-});
+🎟 /freecoupons – Grab limited-time free coupons!  
 
-// Handle /text command
-bot.onText(/\/text/, (msg) => {
-  bot.sendMessage(msg.chat.id, "This is a sample text message.");
-});
+💰 /pricing – View membership and service pricing.  
 
-// Handle /link command
-bot.onText(/\/link/, (msg) => {
-  bot.sendMessage(msg.chat.id, "Check out this link: https://example.com");
-});
+📰 /news – Get the latest updates and announcements.  
 
-// Handle /list command
-bot.onText(/\/list/, (msg) => {
-  const list = "- Item 1\n- Item 2\n- Item 3\n- Item 4";
-  bot.sendMessage(msg.chat.id, `Here is your list:\n${list}`);
-});
+🏋️ /workouts – Explore workout plans & fitness tips.  
 
-// Handle /table command
-bot.onText(/\/table/, (msg) => {
-  const table = `
-  <pre>
-  | Tables   |      Are      |  Cool |
-  |----------|:-------------:|------:|
-  | col 1 is |  left-aligned | $1600 |
-  | col 2 is |    centered   |   $12 |
-  | col 3 is | right-aligned |    $1 |
-  </pre>
+📋 /survey – Share your feedback & help us improve.  
+
+📋 /branches – View all branches of Hulk Gym.  
+
+🚀 /joinus – Become a member and start your journey!  
+
+❤️ /survey – Help us to improve our customer experience by giving a survey.  
+
+📜 /mymembership – View your membership details.  
+
+🔔 /subscribe – Stay updated with notifications.  
   `;
-  bot.sendMessage(msg.chat.id, `Here is a table:\n${table}`, {
-    parse_mode: "HTML",
-  });
+
+  bot.sendMessage(chatId, welcomeMessage, { parse_mode: "Markdown" });
 });
 
-// Listen for any kind of message. There are different kinds of
+
+bot.onText(/\/promotion/, async (msg) => {
+  const chatId = msg.chat.id;
+
+  try {
+    // Fetch promotions from your database
+    const promotionRepository = AppDataSource.getRepository(Promotion);
+    const promotions = await promotionRepository.find({
+      order: { created_at: "DESC" }, // Fetch latest promotion
+      take: 1,
+    });
+
+    if (promotions.length === 0) {
+      return bot.sendMessage(chatId, "No promotions available at the moment.");
+    }
+
+    const { title, description, discount_percentage, end_date, image } = promotions[0];
+
+    const caption = `🔥 *${title}* 🔥\n\n` +
+                    `*Offer:* ${discount_percentage}% OFF\n\n` +
+                    `📅 *Valid Until:* ${end_date}\n\n${description}`;
+
+    if (image) {
+      bot.sendPhoto(chatId, image, { caption, parse_mode: "Markdown" });
+    } else {
+      bot.sendMessage(chatId, caption, { parse_mode: "Markdown" });
+    }
+  } catch (error) {
+    console.error("Error fetching promotions:", error);
+    bot.sendMessage(chatId, "An error occurred while fetching promotions. Please try again later.");
+  }
+});
+
+
+bot.onText(/\/freecoupons/, (msg) => {
+  bot.sendMessage(msg.chat.id, "🎟 Get your free coupons here: [Claim Now](https://example.com)", { parse_mode: "Markdown" });
+});
+
+bot.onText(/\/news/, async (msg) => {
+  const chatId = msg.chat.id;
+  try {
+    const newsRepository = AppDataSource.getRepository(News);
+    const newsList = await newsRepository.find({ take: 1 , order: { created_at: "DESC" } });
+
+    if (newsList.length > 0) {
+      for (const newsItem of newsList) {
+        const caption = `${newsItem.image}*${newsItem.title}*\n\n📅 *Date:* ${newsItem.end_date}\n📍 *Location:* ${newsItem.location}\n📝 *Description:* ${newsItem.description}`;
+        
+        if (newsItem.image) {
+          // Send the image first
+          await bot.sendPhoto(chatId, newsItem.image, {
+            caption: caption,
+            parse_mode: "Markdown"
+          });
+        } else {
+          // If no image, send only the message with caption
+          await bot.sendMessage(chatId, caption, { parse_mode: "Markdown" });
+        }
+      }
+    } else {
+      bot.sendMessage(chatId, "No news available at the moment.");
+    }
+  } catch (error) {
+    console.error("Error fetching news:", error);
+    bot.sendMessage(chatId, "An error occurred while fetching news.");
+  }
+})
+// bot.onText(/\/pricing/, (msg) => {
+//   const chatId = msg.chat.id;
+
+//   const pricingMessage = `
+// 📌 *Hulk Gym Membership Plans*  
+
+// 💪 *Basic Plan*  
+// 💰 Price: $29.99/month  
+// ✅ Access to gym equipment  
+// ✅ Locker facility  
+
+// 🔥 *Standard Plan*  
+// 💰 Price: $49.99/month  
+// ✅ Access to gym equipment  
+// ✅ Locker facility  
+// ✅ Group fitness classes  
+
+// 🏆 *Premium Plan*  
+// 💰 Price: $79.99/month  
+// ✅ Access to gym equipment  
+// ✅ Locker facility  
+// ✅ Group fitness classes  
+// ✅ Personal trainer sessions  
+// ✅ Sauna & spa access  
+
+// Type /joinus to become a member now! 🚀
+// `;
+
+//   bot.sendMessage(chatId, pricingMessage, { parse_mode: "Markdown" });
+// });
+
+
+bot.onText(/\/branches/, async (msg) => {
+  const chatId = msg.chat.id;
+  try {
+    // Fetch the branches from the database
+    const branchRepository = AppDataSource.getRepository(Branch);
+    const branches = await branchRepository.find({ take: 1 }); // Limit to 5 branches
+
+    if (branches.length > 0) {
+      // Send branch info to user
+      for (const branch of branches) {
+        let branchInfo = `🏢 *Branch Name:* ${branch.name}\n`;
+        branchInfo += `📍 *Address:* ${branch.address}\n`;
+
+        // If the branch has an image, send the image
+        if (branch.image) {
+          await bot.sendPhoto(chatId, branch.image, {
+            caption: branchInfo,
+            parse_mode: 'Markdown',
+          });
+        } else {
+          await bot.sendMessage(chatId, branchInfo, { parse_mode: 'Markdown' });
+        }
+      }
+    } else {
+      await bot.sendMessage(chatId, "No branches available at the moment.");
+    }
+  } catch (error) {
+    console.error('Error fetching branches:', error);
+    await bot.sendMessage(chatId, 'An error occurred while fetching branch information.');
+  }
+});
+
+bot.onText(/\/workouts/, async (msg) => {
+  const chatId = msg.chat.id;
+  try {
+    const workoutRepository = AppDataSource.getRepository(WorkoutPlan);
+    const workoutPlans = await workoutRepository.find();
+
+    if (workoutPlans.length > 0) {
+      const workoutButtons = workoutPlans.map((plan) => [
+        {
+          text: `🏋️ ${plan.exercise_name}`,
+          callback_data: `workout_${plan.id}`, // Unique callback for each plan
+        },
+      ]);
+
+      await bot.sendMessage(chatId, "Choose a workout plan:", {
+        reply_markup: {
+          inline_keyboard: workoutButtons,
+        },
+      });
+    } else {
+      await bot.sendMessage(chatId, "No workout plans available at the moment.");
+    }
+  } catch (error) {
+    console.error("Error fetching workout plans:", error);
+    await bot.sendMessage(chatId, "An error occurred while fetching workout plans.");
+  }
+});
+
+bot.on("callback_query", async (callbackQuery) => {
+  if (!callbackQuery.message || !callbackQuery.message.chat || !callbackQuery.message.chat.id) {
+    console.error("Callback query does not contain valid message or chat id.");
+    return;
+  }
+
+  const chatId = callbackQuery.message.chat.id;
+  const data = callbackQuery.data;
+  await bot.answerCallbackQuery(callbackQuery.id);
+
+  if (data && data.startsWith("workout_")) {
+    const workoutId = data.split("_")[1];
+
+    if (!workoutId) {
+      await bot.sendMessage(chatId, "Invalid workout ID.");
+      return;
+    }
+    try {
+      const workoutRepository = AppDataSource.getRepository(WorkoutPlan);
+      const workoutPlan = await workoutRepository.findOne({
+        where: { id: workoutId }
+      });
+
+      if (workoutPlan) {
+        const createdAt = workoutPlan.createAt ? workoutPlan.createAt.toLocaleString() : 'N/A';
+        const updatedAt = workoutPlan.updateAt ? workoutPlan.updateAt.toLocaleString() : 'N/A';
+
+        const workoutInfo = `🏋️ *Exercise Name:* ${workoutPlan.exercise_name}\n📝 *Description:* ${workoutPlan.description}\n📅 *Created At:* ${createdAt}\n🕒 *Last Updated:* ${updatedAt}`;
+        
+        await bot.sendMessage(chatId, workoutInfo, { parse_mode: "Markdown" });
+      } else {
+        await bot.sendMessage(chatId, "Workout plan not found.");
+      }
+    } catch (error) {
+      console.error("Error fetching workout plan details:", error);
+      await bot.sendMessage(chatId, "An error occurred while retrieving the workout details.");
+    }
+  } else {
+    await bot.sendMessage(chatId, "Invalid workout callback data.");
+  }
+});
+
+
+bot.onText(/\/survey/, (msg) => {
+  bot.sendMessage(msg.chat.id, "📋 Help us improve! Take our survey: [Start Survey](https://example.com)", { parse_mode: "Markdown" });
+});
+
+bot.onText(/\/joinus/, (msg) => {
+  bot.sendMessage(msg.chat.id, "🚀 Become a member today: [Join Now](https://example.com)", { parse_mode: "Markdown" });
+});
+
+bot.onText(/\/my-membership/, (msg) => {
+  bot.sendMessage(msg.chat.id, "📜 View your membership details: [Check Now](https://example.com)", { parse_mode: "Markdown" });
+});
+
+bot.onText(/\/subscribe/, (msg) => {
+  bot.sendMessage(msg.chat.id, "🔔 Subscribe for updates: [Subscribe Now](https://example.com)", { parse_mode: "Markdown" });
+});
+
+
+
 bot.on("message", (msg) => {
   try {
     const chatId = msg.chat.id;
