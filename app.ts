@@ -14,10 +14,18 @@ import activity from "./src/routes/activity";
 import promotion from "./src/routes/promotion";
 import news from "./src/routes/news";
 
-import company from "./src/routes/company";
-import workoutPlan from "./src/routes/workoutPlan";
+import company from "./src/routes/company"
+import workoutPlan from "./src/routes/workoutPlan"
+import { WorkoutPlan } from './src/entity/workoutPlan.entity';
+import workouType from "./src/routes/workoutType"
+import workoutExercise from "./src/routes/workoutExercise"
+import { FindOptionsWhere } from "typeorm";
 
-import contact from "./src/routes/contact";
+
+import branch from "./src/routes/branch"
+import contact from "./src/routes/contact"
+
+
 import telegramBot from "node-telegram-bot-api";
 import { handleMessage } from "./src/service/telegram.service";
 import branch from "./src/routes/branch";
@@ -30,10 +38,10 @@ import { Promotion } from "./src/entity/promotion.entity";
 
 
 
-const token = process.env.TELEGRAM_TOKEN;
-if (!token) {
-  throw new Error("Telegram Bot Token not provided!");
-}
+// const token = process.env.TELEGRAM_TOKEN;
+// if (!token) {
+//   throw new Error("Telegram Bot Token not provided!");
+// }
 
 var corsOptions = {
   origin: "*",
@@ -62,6 +70,8 @@ app.use("/api/branch", branch);
 
 app.use("/api/company", company);
 app.use("/api/workoutPlan", workoutPlan);
+app.use("/api/typeOfWorkout", workouType);
+app.use("/api/workoutExercise", workoutExercise);
 
 // Create a bot that uses 'polling' to fetch new updates
 const bot = new telegramBot(token, { polling: true });
@@ -69,6 +79,19 @@ const bot = new telegramBot(token, { polling: true });
 // Define the command list
 const commands = [
   { command: "/start", description: "Start the bot and get command list" },
+  
+  { command: "/help", description: "Get help and usage instructions" },
+  { command: "/contact", description: "Get contact information" },
+  { command: "/promotion", description: "See current promotions" },
+  { command: "/feedback", description: "Submit feedback" },
+  { command: "/image", description: "Send an image" },
+  { command: "/text", description: "Send a text message" },
+  { command: "/link", description: "Send a link" },
+  { command: "/list", description: "Send a list" },
+  { command: "/table", description: "Send a table" },
+  { command: "/options", description: "Send options" },
+  { command: "/workoutplan", description: " Send workout plan"}
+
   { command: "/promotions", description: "Check out the latest deals & discounts" },
   { command: "/freecoupons", description: "Grab limited-time free coupons" },
   { command: "/pricing", description: "View membership and service pricing" },
@@ -360,6 +383,117 @@ bot.on("message", (msg) => {
     console.log(err);
   }
 });
+
+// Handle /options command with inline buttons
+bot.onText(/\/options/, (msg) => {
+  const chatId = msg.chat.id;
+  const options = {
+    reply_markup: {
+      inline_keyboard: [
+        [
+          { text: "Option 1", callback_data: "option_1" },
+          { text: "Option 2", callback_data: "option_2" },
+        ],
+        [{ text: "Option 3", callback_data: "option_3" }],
+      ],
+    },
+  };
+  bot.sendMessage(chatId, "Please select an option:", options);
+});
+
+
+// Handle callback queries from inline buttons
+bot.on("callback_query", (callbackQuery) => {
+  const msg = callbackQuery.message;
+  if (msg) {
+    bot.sendMessage(msg.chat.id, `You selected: ${callbackQuery.data}`);
+    bot.answerCallbackQuery(callbackQuery.id);
+  }
+});
+
+// Handle /workoutPlan command dynamically fetching workout plans
+bot.onText(/\/workoutplan/, async (msg) => {
+  const chatId = msg.chat.id;
+
+  try {
+    // Fetch workout plans from the database
+    const workoutPlans = await AppDataSource.getRepository(WorkoutPlan).find();
+
+    // Check if workout plans exist
+    if (workoutPlans.length === 0) {
+      bot.sendMessage(chatId, "No workout plans available at the moment.");
+      return;
+    }
+
+    // Prepare dynamic inline keyboard with workout plans
+    const options = {
+      reply_markup: {
+        inline_keyboard: workoutPlans.map((plan) => [
+          { text: plan.workout_plan_name, callback_data: `workout_plan@${plan.id}` },
+        ]),
+      },
+    };
+
+    bot.sendMessage(chatId, "Please select a workout plan:", options);
+  } catch (error) {
+    console.error("Error fetching workout plans:", error);
+    bot.sendMessage(chatId, "There was an error fetching the workout plans.");
+  }
+});
+
+bot.on("callback_query", async (callbackQuery) => {
+  const msg = callbackQuery.message;
+  if (msg && callbackQuery.data) {
+    const workoutPlanId = callbackQuery.data.split('@')[1];
+    console.log("workoutPlanId:", workoutPlanId);
+
+    try {
+      
+
+      const wp = await AppDataSource.query("SELECT id, workout_plan_name FROM public.workout_plan WHERE id=$1 ORDER BY workout_plan_name ASC", [workoutPlanId]);
+      console.log(wp);
+
+      let wpTitle = "";
+      if(wp.length > 0){
+        wpTitle = wp[0].workout_plan_name;
+      }
+
+      const wpTypes = await AppDataSource.query("SELECT id, workout_type FROM public.types_of_workout WHERE workout_plan_id=$1", [workoutPlanId]);
+      console.log("wpTypes before map:", wpTypes);
+
+      const wpTypes1 = wpTypes.map((item: any) => {
+
+
+        // 1. query to get exercises by item type id
+        // 2. use map to get only string that we want e.g Exercise Name, Rep, Calaries,...
+        // 3. use join to convert array to string and add new line \n to each string
+        // 4. add that string to return string 
+
+
+        return `🔥 *${item.workout_type}*`;
+      });
+      console.log("wpTypes after map:", wpTypes1);
+
+      const wpTypesContent = wpTypes1.join("\n")
+      
+      const message = `💪 *${wpTitle}*\n${wpTypesContent}`
+
+      bot.sendPhoto(msg.chat.id, "https://content.artofmanliness.com/uploads/2024/07/lee2-1.jpg", {parse_mode: "Markdown", caption: message})
+
+      
+    } catch (error) {
+      console.error("Error fetching workout plan details:", error);
+      bot.sendMessage(msg.chat.id, "There was an error fetching the workout plan details.");
+    }
+
+    bot.answerCallbackQuery(callbackQuery.id); // Acknowledge callback query
+  } else {
+    console.warn("Received callback query without data:", callbackQuery);
+  }
+});
+
+
+
 
 // Start server
 const PORT = process.env.PORT || 3000;

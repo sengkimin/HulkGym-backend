@@ -19,6 +19,24 @@ export const getBranch = async (req: Request, res: Response) => {
 
 
 export const createBranch = async (req: Request, res: Response) => {
+
+    // const branchRepository = AppDataSource.getRepository(Branch);
+    // const companyRepository = AppDataSource.getRepository(Company);
+    // const { name, address, company_id } = req.body;
+
+    // try {
+    //     const foundCompany = await companyRepository.findOne({ 
+    //             where: { id: Number(company_id) } });
+    //     if (!foundCompany) return res.status(404).json({ message: "Company not found" });
+
+    //     const branch = branchRepository.create({ name, address, company_id , company: foundCompany });
+    //     await branchRepository.save(branch);
+
+    //     return res.status(201).json({ message: "Branch created", branch });
+    // } catch (err) {
+    //     return res.status(500).json({ success: false, message: "Internal server error!" });
+    // }
+
     try {
         console.log("Received request:", req.body); 
         
@@ -84,6 +102,7 @@ export const deleteBranch = async (req: Request, res: Response) => {
         console.error("Error deleting branch:", err);
         return res.status(500).json({ message: "Internal server error!" });
     }
+
 };
 
 

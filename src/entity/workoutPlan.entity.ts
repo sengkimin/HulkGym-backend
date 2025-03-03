@@ -1,20 +1,22 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn,} from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn} from "typeorm";
 
-@Entity('workout_plan')
+
+@Entity("workout_plan")
 export class WorkoutPlan {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id: number;
 
-  @Column({ type: 'varchar', length: 255})
-  exercise_name: string;
+  @Column({ type: "varchar", length: 255 })
+  workout_plan_name: string;
 
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ type: "text", nullable: true })
   description: string;
 
   @CreateDateColumn()
-  createAt: Date;
+  created_at: Date;
 
   @UpdateDateColumn()
-  updateAt: Date;
+  updated_at: Date;
 
+  
 }
